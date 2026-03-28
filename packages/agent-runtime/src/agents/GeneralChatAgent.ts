@@ -323,6 +323,21 @@ export class GeneralChatAgent implements Agent {
         maxWindowToken: this.config.compressionConfig?.maxWindowToken,
       });
 
+      // [debug] Run original logic without maxWindowToken for comparison
+      const originalCheck = shouldCompress(messages, {});
+
+      if (compressionCheck.threshold !== originalCheck.threshold) {
+        console.log(
+          '[compression-debug][toLLMCall] fixed threshold=%d (maxWindowToken=%d), original threshold=%d (hardcoded 128k), tokens=%d, fixed=%s, original=%s',
+          compressionCheck.threshold,
+          this.config.compressionConfig?.maxWindowToken,
+          originalCheck.threshold,
+          compressionCheck.currentTokenCount,
+          compressionCheck.needsCompression,
+          originalCheck.needsCompression,
+        );
+      }
+
       if (compressionCheck.needsCompression) {
         return {
           payload: {
@@ -389,6 +404,21 @@ export class GeneralChatAgent implements Agent {
           const compressionCheck = shouldCompress(state.messages, {
             maxWindowToken: this.config.compressionConfig?.maxWindowToken,
           });
+
+          // [debug] Run original logic without maxWindowToken for comparison
+          const originalCheck = shouldCompress(state.messages, {});
+
+          if (compressionCheck.threshold !== originalCheck.threshold) {
+            console.log(
+              '[compression-debug][user_input] fixed threshold=%d (maxWindowToken=%d), original threshold=%d (hardcoded 128k), tokens=%d, fixed=%s, original=%s',
+              compressionCheck.threshold,
+              this.config.compressionConfig?.maxWindowToken,
+              originalCheck.threshold,
+              compressionCheck.currentTokenCount,
+              compressionCheck.needsCompression,
+              originalCheck.needsCompression,
+            );
+          }
 
           if (compressionCheck.needsCompression) {
             // Context exceeds threshold, compress ALL messages into a single summary
