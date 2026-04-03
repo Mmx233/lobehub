@@ -7,6 +7,7 @@ import {
   updateBotRuntimeStatus,
 } from '@/server/services/gateway/runtimeStatus';
 
+import { proxyFetch } from '../proxyFetch';
 import {
   type BotPlatformRuntimeContext,
   type BotProviderConfig,
@@ -151,7 +152,7 @@ export class SlackClientFactory extends ClientFactory {
     }
 
     try {
-      const res = await fetch(`${SLACK_API_BASE}/auth.test`, {
+      const res = await proxyFetch(`${SLACK_API_BASE}/auth.test`, {
         headers: {
           'Authorization': `Bearer ${credentials.botToken}`,
           'Content-Type': 'application/json',

@@ -1,5 +1,7 @@
 import debug from 'debug';
 
+import { proxyFetch } from '../proxyFetch';
+
 const log = debug('bot-platform:telegram:client');
 
 export const TELEGRAM_API_BASE = 'https://api.telegram.org';
@@ -178,7 +180,7 @@ export class TelegramApi {
   private async call(method: string, body: Record<string, unknown>): Promise<any> {
     const url = `${TELEGRAM_API_BASE}/bot${this.botToken}/${method}`;
 
-    const response = await fetch(url, {
+    const response = await proxyFetch(url, {
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',

@@ -1,3 +1,4 @@
+import { proxyFetch } from '../proxyFetch';
 import { TELEGRAM_API_BASE } from './api';
 
 /**
@@ -36,7 +37,7 @@ export async function setTelegramWebhook(
     params.secret_token = secretToken;
   }
 
-  const response = await fetch(`${TELEGRAM_API_BASE}/bot${botToken}/setWebhook`, {
+  const response = await proxyFetch(`${TELEGRAM_API_BASE}/bot${botToken}/setWebhook`, {
     body: JSON.stringify(params),
     headers: { 'Content-Type': 'application/json' },
     method: 'POST',

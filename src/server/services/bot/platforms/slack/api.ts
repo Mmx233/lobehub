@@ -1,5 +1,7 @@
 import debug from 'debug';
 
+import { proxyFetch } from '../proxyFetch';
+
 const log = debug('bot-platform:slack:client');
 
 export const SLACK_API_BASE = 'https://slack.com/api';
@@ -172,7 +174,7 @@ export class SlackApi {
       }
     }
 
-    const response = await fetch(url, {
+    const response = await proxyFetch(url, {
       body: params,
       headers: {
         'Authorization': `Bearer ${this.botToken}`,

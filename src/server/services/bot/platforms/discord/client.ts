@@ -9,6 +9,7 @@ import {
   updateBotRuntimeStatus,
 } from '@/server/services/gateway/runtimeStatus';
 
+import { proxyFetch } from '../proxyFetch';
 import {
   type BotPlatformRuntimeContext,
   type BotProviderConfig,
@@ -276,7 +277,7 @@ export class DiscordClientFactory extends ClientFactory {
     if (errors.length > 0) return { errors, valid: false };
 
     try {
-      const res = await fetch('https://discord.com/api/v10/users/@me', {
+      const res = await proxyFetch('https://discord.com/api/v10/users/@me', {
         headers: { Authorization: `Bot ${credentials.botToken}` },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
