@@ -7,6 +7,7 @@ import {
   updateBotRuntimeStatus,
 } from '@/server/services/gateway/runtimeStatus';
 
+import { proxyFetch } from '../proxyFetch';
 import {
   type BotPlatformRuntimeContext,
   type BotProviderConfig,
@@ -87,7 +88,7 @@ class TelegramWebhookClient implements PlatformClient {
   async stop(): Promise<void> {
     log('Stopping TelegramBot appId=%s', this.applicationId);
     try {
-      const response = await fetch(
+      const response = await proxyFetch(
         `${TELEGRAM_API_BASE}/bot${this.config.credentials.botToken}/deleteWebhook`,
         { method: 'POST' },
       );
@@ -122,7 +123,7 @@ class TelegramWebhookClient implements PlatformClient {
     const telegram = new TelegramApi(this.config.credentials.botToken);
     const chatId = extractChatId(platformThreadId);
     return {
-      createMessage: (content) => telegram.sendMessage(chatId, content).then(() => {}),
+      createMessage: (content) => telegram.sendMessage(chatId, content).then(() => { }),
       editMessage: (messageId, content) =>
         telegram.editMessageText(chatId, parseTelegramMessageId(messageId), content),
       removeReaction: (messageId) =>
@@ -168,7 +169,7 @@ export class TelegramClientFactory extends ClientFactory {
     }
 
     try {
-      const res = await fetch(`${TELEGRAM_API_BASE}/bot${credentials.botToken}/getMe`);
+      const res = await proxyFetch(`${TELEGRAM_API_BASE}/bot${credentials.botToken}/getMe`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return { valid: true };
     } catch {

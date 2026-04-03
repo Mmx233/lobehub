@@ -9,6 +9,7 @@ import {
   updateBotRuntimeStatus,
 } from '@/server/services/gateway/runtimeStatus';
 
+import { proxyFetch } from '../proxyFetch';
 import {
   type BotPlatformRuntimeContext,
   type BotProviderConfig,
@@ -106,7 +107,7 @@ class DiscordGatewayClient implements PlatformClient {
       await bot.initialize();
 
       const discordAdapter = (bot as any).adapters.get('discord') as DiscordAdapter;
-      const waitUntil = options?.waitUntil ?? ((task: Promise<any>) => task.catch(() => {}));
+      const waitUntil = options?.waitUntil ?? ((task: Promise<any>) => task.catch(() => { }));
 
       const webhookUrl = `${(this.context.appUrl || '').trim()}/api/agent/webhooks/discord/${this.applicationId}`;
 
@@ -194,7 +195,7 @@ class DiscordGatewayClient implements PlatformClient {
   getMessenger(platformThreadId: string): PlatformMessenger {
     const channelId = extractChannelId(platformThreadId);
     return {
-      createMessage: (content) => this.discord.createMessage(channelId, content).then(() => {}),
+      createMessage: (content) => this.discord.createMessage(channelId, content).then(() => { }),
       editMessage: (messageId, content) => this.discord.editMessage(channelId, messageId, content),
       removeReaction: (messageId, emoji) =>
         this.discord.removeOwnReaction(channelId, messageId, emoji),
@@ -264,7 +265,7 @@ export class DiscordClientFactory extends ClientFactory {
     if (errors.length > 0) return { errors, valid: false };
 
     try {
-      const res = await fetch('https://discord.com/api/v10/users/@me', {
+      const res = await proxyFetch('https://discord.com/api/v10/users/@me', {
         headers: { Authorization: `Bot ${credentials.botToken}` },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

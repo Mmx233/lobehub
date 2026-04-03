@@ -7,6 +7,7 @@ import {
   updateBotRuntimeStatus,
 } from '@/server/services/gateway/runtimeStatus';
 
+import { proxyFetch } from '../proxyFetch';
 import {
   type BotPlatformRuntimeContext,
   type BotProviderConfig,
@@ -103,8 +104,8 @@ class SlackWebhookClient implements PlatformClient {
     return {
       createMessage: (content) =>
         threadTs
-          ? slack.postMessageInThread(channelId, threadTs, content).then(() => {})
-          : slack.postMessage(channelId, content).then(() => {}),
+          ? slack.postMessageInThread(channelId, threadTs, content).then(() => { })
+          : slack.postMessage(channelId, content).then(() => { }),
       editMessage: (messageId, content) => slack.updateMessage(channelId, messageId, content),
       removeReaction: (messageId, emoji) => slack.removeReaction(channelId, messageId, emoji),
       triggerTyping: () => Promise.resolve(), // Slack has no typing indicator API for bots
@@ -151,7 +152,7 @@ export class SlackClientFactory extends ClientFactory {
     }
 
     try {
-      const res = await fetch(`${SLACK_API_BASE}/auth.test`, {
+      const res = await proxyFetch(`${SLACK_API_BASE}/auth.test`, {
         headers: {
           'Authorization': `Bearer ${credentials.botToken}`,
           'Content-Type': 'application/json',
